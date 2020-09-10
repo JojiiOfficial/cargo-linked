@@ -18,7 +18,7 @@ fn main() {
 
 /// Build with cargo
 fn build<S: AsRef<str>>(spath: S) -> bool {
-    let manifest_val = to_manifest_path(spath);
+    let manifest_val = as_manifest_path_arg(spath);
     let mut args: Vec<&str> = vec![&manifest_val];
     args = args.into_iter().filter(|&i| !i.is_empty()).collect();
 
@@ -30,7 +30,7 @@ fn build<S: AsRef<str>>(spath: S) -> bool {
 }
 
 /// Create cargo manifest_path parameter
-fn to_manifest_path<S: AsRef<str>>(spath: S) -> String {
+fn as_manifest_path_arg<S: AsRef<str>>(spath: S) -> String {
     if spath.as_ref() == "." {
         return "".to_owned();
     }
@@ -44,6 +44,9 @@ fn to_manifest_path<S: AsRef<str>>(spath: S) -> String {
     format!("--manifest-path={}", &path.to_str().unwrap())
 }
 
+//fn to_manifest_file()
+
+#[allow(dead_code)]
 fn get_file_owner<S: AsRef<str>>(file: S) -> Option<String> {
     if let Ok(package) = Command::new("pacman")
         .args(&["-Qqo", file.as_ref()])
@@ -60,8 +63,8 @@ mod tests {
     use super::*;
 
     #[test]
-    fn to_manifest_path_1() {
-        let manifest_path = to_manifest_path("/home/lol/programming/rust/AURtomatic");
+    fn as_manifest_path_arg_1() {
+        let manifest_path = as_manifest_path_arg("/home/lol/programming/rust/AURtomatic");
 
         assert_eq!(
             manifest_path,
@@ -70,8 +73,9 @@ mod tests {
     }
 
     #[test]
-    fn to_manifest_path_2() {
-        let manifest_path = to_manifest_path("/home/lol/programming/rust/AURtomatic/Cargo.toml");
+    fn as_manifest_path_arg_2() {
+        let manifest_path =
+            as_manifest_path_arg("/home/lol/programming/rust/AURtomatic/Cargo.toml");
 
         assert_eq!(
             manifest_path,
@@ -80,8 +84,8 @@ mod tests {
     }
 
     #[test]
-    fn to_manifest_path_3() {
-        assert!(to_manifest_path(".").is_empty());
+    fn as_manifest_path_arg_3() {
+        assert!(as_manifest_path_arg(".").is_empty());
     }
 
     // Requires pacman and glibc
