@@ -5,7 +5,11 @@ use std::fs;
 use std::path::Path;
 use std::process::Command;
 
-use toml_edit::{value, Document};
+use toml_edit::Document;
+
+#[cfg(test)]
+#[path = "main_test.rs"]
+mod main_tests;
 
 fn main() {
     let mut path = String::from(".");
@@ -18,8 +22,12 @@ fn main() {
         return;
     }
 
-    let bf = get_build_folder(path);
-    println!("{}", bf);
+    let bin_file = get_binary(&path);
+    let binary = Path::new(&bin_file);
+    if !binary.exists() {
+        println!("Binary was not found");
+        return;
+    }
 }
 
 /// Build with cargo
@@ -82,7 +90,7 @@ fn get_file_owner<S: AsRef<str>>(file: S) -> Option<String> {
     None
 }
 
-fn get_build_folder<S: AsRef<str>>(base: S) -> String {
+fn get_binary<S: AsRef<str>>(base: S) -> String {
     let manifest_path = to_manifest_path(&base);
 
     let pkg_name = get_package_info(&read_cargo_toml(to_manifest_file(&base)), "name");
@@ -102,65 +110,4 @@ fn read_cargo_toml<S: AsRef<str>>(path: S) -> Document {
 
 fn get_package_info(parsed: &Document, key: &str) -> String {
     String::from(parsed["package"][key].as_str().unwrap())
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn as_manifest_path_arg_1() {
-        let manifest_path =
-            as_manifest_path_arg("/home/lol/programming/rust/AURtomatic/Cargo.toml");
-
-        assert_eq!(
-            manifest_path,
-            "--manifest-path=/home/lol/programming/rust/AURtomatic/Cargo.toml"
-        );
-    }
-
-    #[test]
-    fn as_manifest_path_arg_2() {
-        assert!(as_manifest_path_arg(".").is_empty());
-    }
-
-    // Requires pacman and glibc
-    #[test]
-    fn test_get_file_owner() {
-        let file = "/usr/lib/libc.so";
-
-        let output = get_file_owner(file);
-        assert!(output.is_some());
-        assert_eq!(output.unwrap(), "glibc");
-    }
-
-    #[test]
-    fn test_to_manifest_file_1() {
-        let inp = "/home/lol/programming/rust/AURtomatic/";
-
-        assert_eq!(
-            to_manifest_file(&inp),
-            "/home/lol/programming/rust/AURtomatic/Cargo.toml"
-        )
-    }
-
-    #[test]
-    fn test_to_manifest_file_2() {
-        assert_eq!(to_manifest_file("."), "Cargo.toml")
-    }
-
-    #[test]
-    fn test_to_manifest_path() {
-        let inp = "/home/lol/programming/rust/AURtomatic/Cargo.toml";
-
-        assert_eq!(
-            to_manifest_path(&inp),
-            "/home/lol/programming/rust/AURtomatic"
-        )
-    }
-
-    #[test]
-    fn test_get_build_folder() {
-        assert_eq!(get_build_folder("."), "./target/debug/cargo-linked");
-    }
 }
