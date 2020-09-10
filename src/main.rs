@@ -34,7 +34,13 @@ fn main() {
     }
     let ldd_output = ldd_output.unwrap();
 
-    println!("{:?}", ldd_output);
+    println!("{:?}", get_shared_libs_from_ldd(ldd_output));
+}
+
+fn get_shared_libs_from_ldd(ldd: Vec<String>) -> Vec<String> {
+    ldd.into_iter()
+        .map(|i| i.split(" ").nth(2).unwrap().to_owned())
+        .collect()
 }
 
 /// Get linking informations. Remove unresolveable lines
