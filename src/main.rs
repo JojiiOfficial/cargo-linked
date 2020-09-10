@@ -34,7 +34,24 @@ fn main() {
     }
     let ldd_output = ldd_output.unwrap();
 
-    println!("{:?}", get_shared_libs_from_ldd(ldd_output));
+    let ldd_files: Vec<String> = get_shared_libs_from_ldd(ldd_output)
+        .into_iter()
+        .map(|f| get_file_owner(f).unwrap())
+        .collect();
+
+    let ldd_files = remove_doubles(ldd_files);
+
+    println!("{:#?}", ldd_files);
+}
+
+fn remove_doubles(v: Vec<String>) -> Vec<String> {
+    let mut ldd_files_new: Vec<String> = Vec::new();
+    for i in v {
+        if !ldd_files_new.contains(&i) {
+            ldd_files_new.push(i);
+        }
+    }
+    ldd_files_new
 }
 
 fn get_shared_libs_from_ldd(ldd: Vec<String>) -> Vec<String> {
