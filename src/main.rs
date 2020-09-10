@@ -1,5 +1,3 @@
-#![warn(dead_code)]
-
 use std::env;
 use std::fs;
 use std::path::Path;
@@ -9,7 +7,7 @@ use toml_edit::Document;
 
 #[cfg(test)]
 #[path = "main_test.rs"]
-mod main_tests;
+mod main_test;
 
 fn main() {
     let mut path = String::from(".");
@@ -28,6 +26,35 @@ fn main() {
         println!("Binary was not found");
         return;
     }
+
+    let ldd_output = ldd_info(&bin_file);
+    if ldd_output.is_none() {
+        println!("Error retrieving ldd output!");
+        return;
+    }
+    let ldd_output = ldd_output.unwrap();
+
+    println!("{:?}", ldd_output);
+}
+
+/// Get linking informations. Remove unresolveable lines
+fn ldd_info<S: AsRef<str>>(binary: S) -> Option<Vec<String>> {
+    if let Ok(package) = Command::new("ldd").arg(binary.as_ref()).output() {
+        let mut v: Vec<String> = vec![];
+
+        // TODO use iterators
+        for i in String::from_utf8(package.stdout).unwrap().lines() {
+            let i = i.trim().to_owned();
+            if i.is_empty() || !i.contains("=>") {
+                continue;
+            }
+            v.push(i);
+        }
+
+        return Some(v);
+    }
+
+    None
 }
 
 /// Build with cargo
