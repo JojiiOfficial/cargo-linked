@@ -22,8 +22,7 @@ impl App {
             return;
         }
 
-        let ldd = LDD::from_app(&self);
-        let linked = ldd.linked_files().trim();
+        let linked = LDD::from_app(&self).linked_files().trim();
         for i in linked.items {
             println!("{}", i);
         }
