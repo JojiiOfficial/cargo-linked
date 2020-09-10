@@ -7,6 +7,7 @@ steps:
   image: rust:1.46.0-alpine
   commands:
   - apk update && apk upgrade
+  - apk add gcc libc-dev
   - cargo build --all
 
 
