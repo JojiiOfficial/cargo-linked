@@ -18,7 +18,10 @@ impl App {
     }
 
     pub fn run(&self) {
-        //self.build();
+        if !self.build() {
+            return;
+        }
+
         let ldd = LDD::from_app(&self);
         let linked = ldd.linked_files().trim();
         for i in linked.items {
