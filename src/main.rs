@@ -39,5 +39,13 @@ fn main() {
         cmd.current_dir(dir);
     }
 
-    App::new(cmd.exec().unwrap()).run();
+    let exec = match cmd.exec() {
+        Ok(e) => e,
+        Err(err) => {
+            eprintln!("{}", err);
+            return;
+        }
+    };
+
+    App::new(exec).run();
 }
