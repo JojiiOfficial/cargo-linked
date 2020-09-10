@@ -1,0 +1,21 @@
+kind: pipeline
+type: docker
+name: default
+
+steps:
+- name: Build
+  image: rust:1.46.0-alpine
+  commands:
+  - apk update && apk upgrade
+  - cargo build --all
+
+
+# TODO add arch linux tests
+#
+#- name: Test
+#  image: rust:1.46.0-alpine
+#  commands:
+#  - apk update && apk upgrade
+#  - pacman -Syu && pacman -S glibc --noconfirm
+#  - cargo test --all
+#
