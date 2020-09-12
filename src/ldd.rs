@@ -1,5 +1,6 @@
 use std::process::Command;
 
+use crate::app::BinaryType;
 use crate::pacman;
 use crate::App;
 
@@ -34,9 +35,11 @@ impl<'a> LDD<'a> {
 // Private
 impl<'a> LDD<'a> {
     /// Get linked files.
-    pub fn linked_files(&self) -> LddResult {
+    pub fn linked_files(&self, bin_type: BinaryType) -> LddResult {
         // execute ldd commant to get linked files
-        let output = Command::new("ldd").arg(&self.app.get_binary()).output();
+        let output = Command::new("ldd")
+            .arg(&self.app.get_binary(bin_type))
+            .output();
         if output.is_err() {
             return LddResult::default();
         }
