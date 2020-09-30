@@ -11,4 +11,4 @@ Navigate to a cargo directory and run `cargo linked`. You'll see a list of packa
 If you want to run the given rust application somewhere else, make sure you install those packages first.
 
 # Note
-Only arch packages are supported by now. PRs are welcome!
+Only arch packages are supported by now other plans pending. PRs are welcome!
