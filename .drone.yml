@@ -4,7 +4,7 @@ name: default
 
 steps:
 - name: Build
-  image: rust:1.48.0-alpine
+  image: rust:1.51.0-alpine
   commands:
   - apk update && apk upgrade
   - apk add gcc libc-dev
