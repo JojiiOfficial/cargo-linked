@@ -15,5 +15,5 @@ keywords = ["ldd","linking"]
 
 [dependencies]
 toml_edit = "0.2.1"
-cargo_metadata = "0.13.1"
+cargo_metadata = "0.18.1"
 structopt = "0.3.21"
